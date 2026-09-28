@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title if title else "ComicCraft - AI Comic Story Creator" }}</title>
+    
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="comic-app-body">
+    <div class="scenic-backdrop"></div>
+    <div class="backdrop-overlay"></div>
+
+    <div class="page-wrapper">
+        <!-- Top Navigation -->
+        <header class="app-header">
+            <div class="header-left">
+                <a href="/" class="brand-link">
+                    <span class="brand-badge">⚡</span>
+                    <span class="brand-text">COMIC<span class="brand-gradient">CRAFT</span></span>
+                </a>
+                <span class="version-tag">AI Studio</span>
+            </div>
+            
+            <div class="header-right">
+                <div class="system-status-pill">
+                    <span class="status-dot"></span>
+                    <span class="status-label">Pipeline Ready</span>
+                </div>
+                <nav class="nav-links">
+                    <a href="/" class="nav-btn nav-btn-active">Creator</a>
+                    <a href="/docs" target="_blank" class="nav-btn">API Docs</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Modern Footer -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p><strong>ComicCraft</strong> • Multi-Agent Generative Comic Creator</p>
+                <p class="footer-meta">Powered by Google Gemini Models • Stable Diffusion • FastAPI • FPDF2</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Enhanced Interactive Progress Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-modal">
+            <div class="loading-animation">
+                <div class="pulse-ring"></div>
+                <div class="pencil-icon">🎨</div>
+            </div>
+
+            <h3 id="loading-title">Generating Your Comic...</h3>
+            <p id="loading-message">Analyzing story idea and character brief</p>
+
+            <div class="progress-track-wrapper">
+                <div class="progress-track">
+                    <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                </div>
+                <div class="progress-percent" id="progress-percent">0%</div>
+            </div>
+
+            <div class="progress-pipeline">
+                <div class="pipeline-step active" id="step-1">
+                    <span class="step-num">1</span>
+                    <span class="step-text">5-Panel Storyboard Outline (Gemini Flash)</span>
+                </div>
+                <div class="pipeline-step" id="step-2">
+                    <span class="step-num">2</span>
+                    <span class="step-text">Dialogue & Scene Narration (Gemini Pro)</span>
+                </div>
+                <div class="pipeline-step" id="step-3">
+                    <span class="step-num">3</span>
+                    <span class="step-text">Visual Art Generation (Stable Diffusion)</span>
+                </div>
+                <div class="pipeline-step" id="step-4">
+                    <span class="step-num">4</span>
+                    <span class="step-text">Layout Binding & PDF Compilation (FPDF2)</span>
+                </div>
+            </div>
+
+            <div class="loading-tip" id="loading-tip">
+                💡 <em>Tip: Each panel is art-directed with custom prompts to maintain character and tonal coherence.</em>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="preview-workspace">
+    <!-- Story Meta Card Header -->
+    <div class="glass-card story-hero-card">
+        <div class="hero-top-row">
+            <span class="comic-chip title-chip">📖 Your Comic Preview • Issue #1</span>
+            <div class="view-toggle-group">
+                <span class="toggle-label">Layout:</span>
+                <button type="button" class="toggle-btn active" id="view-stack-btn" onclick="setViewMode('stack')">
+                    📄 Single Column
+                </button>
+                <button type="button" class="toggle-btn" id="view-grid-btn" onclick="setViewMode('grid')">
+                    📰 Comic Grid
+                </button>
+            </div>
+        </div>
+
+        <h1 class="story-main-title">{{ comic.title }}</h1>
+        <p class="story-original-prompt">"{{ comic.story_prompt }}"</p>
+
+        <!-- Meta Attribute Chips -->
+        <div class="meta-chips-row">
+            <div class="chip chip-character">
+                <span class="chip-icon">👤</span>
+                <span class="chip-text">{{ comic.character_name }}</span>
+            </div>
+            <div class="chip chip-setting">
+                <span class="chip-icon">🌲</span>
+                <span class="chip-text">{{ comic.setting }}</span>
+            </div>
+            <div class="chip chip-tone">
+                <span class="chip-icon">🎭</span>
+                <span class="chip-text">{{ comic.tone }}</span>
+            </div>
+            <div class="chip chip-style">
+                <span class="chip-icon">🎨</span>
+                <span class="chip-text">{{ comic.art_style }}</span>
+            </div>
+            <div class="chip chip-date">
+                <span class="chip-icon">⏱️</span>
+                <span class="chip-text">{{ comic.created_at }}</span>
+            </div>
+        </div>
+
+        <!-- Header Quick Action Bar -->
+        <div class="hero-actions-bar">
+            <a href="/download-pdf/{{ comic.comic_id }}" class="btn btn-success btn-glow" download onclick="handleExportClick('{{ comic.comic_id }}')">
+                <span class="btn-icon">📥</span> Download PDF Document
+            </a>
+            <button type="button" class="btn btn-secondary" onclick="copyStoryScript()">
+                <span class="btn-icon">📋</span> Copy Script
+            </button>
+            <a href="/" class="btn btn-outline">
+                <span class="btn-icon">🎨</span> Create New Comic
+            </a>
+        </div>
+    </div>
+
+    <!-- Sequential Comic Panels Container -->
+    <div class="panels-container layout-stack" id="panels-container">
+        {% for panel in comic.panels %}
+        <article class="panel-card glass-card">
+            <!-- Panel Header -->
+            <div class="panel-card-header">
+                <div class="panel-badge-pill">
+                    <span class="panel-num">PANEL {{ panel.panel_number }}</span>
+                    <span class="panel-separator">•</span>
+                    <span class="panel-heading">{{ panel.title }}</span>
+                </div>
+            </div>
+
+            <!-- Panel Artwork Frame -->
+            <div class="panel-artwork-frame">
+                <img 
+                    src="{{ panel.image_path }}" 
+                    alt="Panel {{ panel.panel_number }}: {{ panel.title }}" 
+                    class="panel-img"
+                    loading="lazy"
+                >
+                <div class="frame-style-tag">{{ comic.art_style }}</div>
+            </div>
+
+            <!-- Panel Narrative Content -->
+            <div class="panel-content-body">
+                <!-- Scene Setting Description -->
+                <div class="scene-context">
+                    <span class="context-icon">👁️</span>
+                    <p class="scene-text">{{ panel.scene_description }}</p>
+                </div>
+
+                <!-- Comic Caption -->
+                {% if panel.caption %}
+                <div class="comic-block caption-block">
+                    <span class="block-tag">**CAPTION:**</span>
+                    <span class="block-body">{{ panel.caption }}</span>
+                </div>
+                {% endif %}
+
+                <!-- Scene Narration -->
+                {% if panel.narration %}
+                <div class="comic-block narration-block">
+                    <span class="block-tag">**NARRATION:**</span>
+                    <span class="block-body">{{ panel.narration }}</span>
+                </div>
+                {% endif %}
+
+                <!-- Character Dialogue Bubble -->
+                {% if panel.dialogue %}
+                <div class="comic-block dialogue-block">
+                    <div class="bubble-tail"></div>
+                    <span class="block-tag">**DIALOGUE:**</span>
+                    <span class="block-body dialogue-speech">{{ panel.dialogue }}</span>
+                </div>
+                {% endif %}
+
+                <!-- Art-Direction Prompt Accordion -->
+                {% if panel.image_prompt %}
+                <details class="prompt-inspector">
+                    <summary class="prompt-summary">
+                        <span class="prompt-summary-icon">🔍</span>
+                        <span>View Stable Diffusion Art Direction Prompt</span>
+                    </summary>
+                    <div class="prompt-details-body">
+                        <code>{{ panel.image_prompt }}</code>
+                    </div>
+                </details>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+
+    <!-- Bottom Sticky Action Dock -->
+    <div class="bottom-action-dock glass-card">
+        <div class="dock-content">
+            <div class="dock-left">
+                <span class="dock-title">Comic Ready for Publishing!</span>
+                <span class="dock-sub">5 panels bound into multi-page PDF with full artwork and narration.</span>
+            </div>
+            <div class="dock-buttons">
+                <a href="/download-pdf/{{ comic.comic_id }}" class="btn btn-success btn-large btn-glow" download onclick="handleExportClick('{{ comic.comic_id }}')">
+                    📥 Download Comic PDF
+                </a>
+                <a href="/export-success?comic_id={{ comic.comic_id }}" class="btn btn-secondary btn-large">
+                    View Export Screen
+                </a>
+                <a href="/" class="btn btn-outline btn-large">
+                    🎨 Create Another Comic
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification for script copy -->
+<div id="toast-message" class="toast-message hidden">
+    ✅ Story script copied to clipboard!
+</div>
+
+<!-- Hidden script text for easy clipboard copying -->
+<textarea id="hidden-story-script" style="display:none;">
+COMICCRAFT STORY: {{ comic.title }}
+Character: {{ comic.character_name }} | Setting: {{ comic.setting }} | Tone: {{ comic.tone }} | Style: {{ comic.art_style }}
+
+{% for panel in comic.panels %}
+--- PANEL {{ panel.panel_number }}: {{ panel.title }} ---
+Scene: {{ panel.scene_description }}
+Caption: {{ panel.caption }}
+Narration: {{ panel.narration }}
+{% if panel.dialogue %}Dialogue: {{ panel.dialogue }}{% endif %}
+Prompt: {{ panel.image_prompt }}
+
+{% endfor %}
+</textarea>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function handleExportClick(comicId) {
+    setTimeout(function() {
+        window.location.href = '/export-success?comic_id=' + comicId;
+    }, 1200);
+}
+
+function setViewMode(mode) {
+    const container = document.getElementById('panels-container');
+    const stackBtn = document.getElementById('view-stack-btn');
+    const gridBtn = document.getElementById('view-grid-btn');
+    
+    if (mode === 'grid') {
+        container.classList.remove('layout-stack');
+        container.classList.add('layout-grid');
+        gridBtn.classList.add('active');
+        stackBtn.classList.remove('active');
+    } else {
+        container.classList.remove('layout-grid');
+        container.classList.add('layout-stack');
+        stackBtn.classList.add('active');
+        gridBtn.classList.remove('active');
+    }
+}
+
+function copyStoryScript() {
+    const scriptEl = document.getElementById('hidden-story-script');
+    if (scriptEl) {
+        navigator.clipboard.writeText(scriptEl.value).then(() => {
+            const toast = document.getElementById('toast-message');
+            if (toast) {
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 2500);
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

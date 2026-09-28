@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="creator-wrapper">
+    <div class="glass-card creation-modal">
+        <div class="card-header">
+            <div class="card-badge-pill">
+                <span class="icon">✨</span> Generative Story Studio
+            </div>
+            <h1 class="card-heading">
+                <span class="pen-icon">🖊️</span> Create Your Comic
+            </h1>
+            <p class="card-subheading">
+                Enter your story concept and creative direction. ComicCraft will plan, illustrate, and publish a complete 5-panel comic strip.
+            </p>
+        </div>
+
+        <!-- Quick Inspiration Presets -->
+        <div class="inspiration-section">
+            <span class="inspiration-label">⚡ Quick Inspiration:</span>
+            <div class="inspiration-pills">
+                <button type="button" class="preset-pill active" onclick="applyPreset('fox')">
+                    🦊 Brave Fox
+                </button>
+                <button type="button" class="preset-pill" onclick="applyPreset('robot')">
+                    🤖 Space Unit-7
+                </button>
+                <button type="button" class="preset-pill" onclick="applyPreset('samurai')">
+                    ⚔️ Shadow Samurai
+                </button>
+                <button type="button" class="preset-pill" onclick="applyPreset('cyberpunk')">
+                    🌆 Neon Detective
+                </button>
+            </div>
+        </div>
+
+        <form id="comic-form" action="/generate" method="POST" class="comic-form">
+            <!-- Story Prompt Input -->
+            <div class="form-group">
+                <div class="label-row">
+                    <label for="story_prompt">
+                        <span class="label-icon">💡</span> Story Prompt
+                    </label>
+                    <span id="char-counter" class="char-counter">44 / 1000</span>
+                </div>
+                <textarea 
+                    id="story_prompt" 
+                    name="story_prompt" 
+                    rows="3" 
+                    required 
+                    maxlength="1000"
+                    placeholder="Describe your story premise, inciting incident, and core concept..."
+                >A brave fox explores an enchanted forest.</textarea>
+            </div>
+
+            <!-- Main Character Name -->
+            <div class="form-group">
+                <label for="character_name">
+                    <span class="label-icon">👤</span> Main Character Name
+                </label>
+                <input 
+                    type="text" 
+                    id="character_name" 
+                    name="character_name" 
+                    required 
+                    value="Ember" 
+                    placeholder="e.g. Ember, Alex, Unit-7"
+                    maxlength="80"
+                >
+            </div>
+
+            <!-- Triple Select Grid -->
+            <div class="form-grid-3">
+                <!-- Setting -->
+                <div class="form-group">
+                    <label for="setting">
+                        <span class="label-icon">🌲</span> Setting
+                    </label>
+                    <div class="select-wrapper">
+                        <select id="setting" name="setting" required>
+                            {% for item in default_settings %}
+                                <option value="{{ item }}" {% if item == 'Forest' %}selected{% endif %}>{{ item }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Story Tone -->
+                <div class="form-group">
+                    <label for="tone">
+                        <span class="label-icon">🎭</span> Story Tone
+                    </label>
+                    <div class="select-wrapper">
+                        <select id="tone" name="tone" required>
+                            {% for item in default_tones %}
+                                <option value="{{ item }}" {% if item == 'Dramatic' %}selected{% endif %}>{{ item }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Art Style -->
+                <div class="form-group">
+                    <label for="art_style">
+                        <span class="label-icon">🎨</span> Art Style
+                    </label>
+                    <div class="select-wrapper">
+                        <select id="art_style" name="art_style" required>
+                            {% for item in default_styles %}
+                                <option value="{{ item }}" {% if item == 'Realistic' %}selected{% endif %}>{{ item }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="form-actions">
+                <button type="submit" id="generate-btn" class="btn btn-primary btn-block btn-generate">
+                    <span class="btn-text">Generate Comic</span>
+                    <span class="btn-sparkle">✨</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

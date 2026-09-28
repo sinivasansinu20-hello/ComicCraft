@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="success-screen-wrapper">
+    <!-- Confetti canvas container -->
+    <div class="confetti-container" id="confetti-container"></div>
+
+    <div class="glass-card success-display-card">
+        <!-- Glowing Check Badge -->
+        <div class="success-halo-icon">
+            <div class="halo-ring"></div>
+            <div class="halo-circle">
+                <span class="icon-check">✓</span>
+            </div>
+        </div>
+
+        <h1 class="success-heading">Comic Exported Successfully!</h1>
+
+        <p class="success-lead">
+            Your AI-powered comic has been successfully created and bound into a publication-ready PDF document!
+        </p>
+
+        {% if comic %}
+        <div class="comic-spec-card">
+            <div class="spec-header">
+                <span class="spec-title">DOCUMENT SPECIFICATIONS</span>
+                <span class="spec-badge">FPDF2 Multi-Page Engine</span>
+            </div>
+            <div class="spec-grid">
+                <div class="spec-item">
+                    <span class="spec-label">Story Title:</span>
+                    <span class="spec-value"><strong>{{ comic.title }}</strong></span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Total Panels:</span>
+                    <span class="spec-value">5 Illustrated Scenes</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Hero / Setting:</span>
+                    <span class="spec-value">{{ comic.character_name }} in {{ comic.setting }}</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Tone & Style:</span>
+                    <span class="spec-value">{{ comic.tone }} • {{ comic.art_style }}</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Timestamp:</span>
+                    <span class="spec-value">{{ comic.created_at }}</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Export File:</span>
+                    <span class="spec-value code-snippet">{{ comic.comic_id }}_comic.pdf</span>
+                </div>
+            </div>
+
+            <div class="spec-download-cta">
+                <a href="/download-pdf/{{ comic.comic_id }}" class="btn btn-success btn-large btn-glow" download>
+                    <span class="btn-icon">📥</span> Download PDF Document
+                </a>
+            </div>
+        </div>
+        {% elif comic_id %}
+        <div class="comic-spec-card">
+            <div class="spec-download-cta">
+                <a href="/download-pdf/{{ comic_id }}" class="btn btn-success btn-large btn-glow" download>
+                    <span class="btn-icon">📥</span> Download PDF Document
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="success-footer-actions">
+            <a href="/" class="btn btn-primary btn-large">
+                <span class="btn-icon">🎨</span> Go Create Another Comic
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Lightweight confetti burst animation
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('confetti-container');
+    if (!container) return;
+
+    const colors = ['#38bdf8', '#fbbf24', '#34d399', '#f472b6', '#a78bfa', '#60a5fa'];
+    for (let i = 0; i < 45; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti-piece';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        confetti.style.animationDelay = (Math.random() * 1.5) + 's';
+        confetti.style.opacity = Math.random() * 0.7 + 0.3;
+        confetti.style.transform = `scale(${Math.random() * 0.6 + 0.4}) rotate(${Math.random() * 360}deg)`;
+        container.appendChild(confetti);
+    }
+});
+</script>
+{% endblock %}
